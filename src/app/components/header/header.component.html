@@ -1,0 +1,10 @@
+<div class="w-full flex justify-center items-center">
+  <button mat-flat-button [disabled]="!(appReadyForPlay$ | async)" (click)="getCardsForDuel()">
+    Play
+  </button>
+</div>
+<div class="flex absolute">
+  <img src="assets/hero.svg" alt="Heroes" height="28" width="28" class="mr-1">
+  <mat-slide-toggle color="primary" [(ngModel)]="starshipsMode"></mat-slide-toggle>
+  <img src="assets/starship.svg" alt="Starships" height="28" width="28" class="ml-1">
+</div>

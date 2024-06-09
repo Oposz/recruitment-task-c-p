@@ -1,0 +1,62 @@
+@switch (cardDetails.type) {
+  @case (CardType.PERSON) {
+    <mat-card [appearance]="'outlined'" class="text-cyan h-full flex" [class.winner]="cardDetails.winner">
+      @if (cardDetails.winner) {
+        <ng-template [ngTemplateOutlet]="winnerBadge"/>
+      }
+      <mat-card-header class="mb-4">
+        <mat-card-title>{{ cardDetails.data.properties.name }}</mat-card-title>
+        <mat-card-subtitle>Mass: {{ cardDetails.data.properties.mass }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="h-full !flex flex-col justify-between">
+        <p>{{ cardDetails.data.description }}</p>
+        <div class="grid grid-cols-2 gap-1.5 mt-auto">
+          <app-card-detail [label]="'Born'" [detail]="cardDetails.data.properties.birth_year"/>
+          <app-card-detail [label]="'Eye Color'" [detail]="cardDetails.data.properties.eye_color"/>
+          <app-card-detail [label]="'Gender'" [detail]="cardDetails.data.properties.gender"/>
+          <app-card-detail [label]="'Hair Color'" [detail]="cardDetails.data.properties.hair_color"/>
+          <app-card-detail [label]="'Height'" [detail]="cardDetails.data.properties.height"/>
+          <app-card-detail [label]="'Skin Color'" [detail]="cardDetails.data.properties.skin_color"/>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+  @case (CardType.STARSHIP) {
+    <mat-card [appearance]="'outlined'" class="text-cyan h-full flex" [class.winner]="cardDetails.winner">
+      @if (cardDetails.winner) {
+        <ng-template [ngTemplateOutlet]="winnerBadge"/>
+      }
+      <mat-card-header class="mb-4">
+        <mat-card-title>{{ cardDetails.data.properties.name }}</mat-card-title>
+        <mat-card-subtitle>Crew: {{ cardDetails.data.properties.crew }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="h-full !flex flex-col justify-between">
+        <p>{{ cardDetails.data.description }}</p>
+        <div class="grid grid-cols-2 gap-1.5 mt-auto">
+          <app-card-detail [label]="'Starship Class'" [detail]="cardDetails.data.properties.starship_class"/>
+          <app-card-detail [label]="'Manufacturer'" [detail]="cardDetails.data.properties.manufacturer"/>
+          <app-card-detail [label]="'Cargo Capacity'" [detail]="cardDetails.data.properties.cargo_capacity"/>
+          <app-card-detail [label]="'Created'" [detail]="cardDetails.data.properties.created"/>
+          <app-card-detail [label]="'Length'" [detail]="cardDetails.data.properties.length"/>
+          <app-card-detail [label]="'Max Speed'" [detail]="cardDetails.data.properties.max_atmosphering_speed"/>
+          <app-card-detail [label]="'Model'" [detail]="cardDetails.data.properties.model"/>
+          <app-card-detail [label]="'Passengers'" [detail]="cardDetails.data.properties.passengers"/>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+}
+
+<ng-template #loader>
+  <mat-card [appearance]="'outlined'" class="h-full flex justify-center items-center">
+    <mat-card-content>
+      <mat-spinner/>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
+
+<ng-template #winnerBadge>
+  <p class="-top-4 -left-10 absolute font-bold text-xl w-fit bg-cyan text-themebg rounded-2xl px-2 py-1 animate-custom-pulse">
+    WINNER
+  </p>
+</ng-template>
