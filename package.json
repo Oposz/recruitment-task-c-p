@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "jest",
     "e2e": "ng e2e",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
     "autoprefixer": "^10.4.19",
+    "esbuild": "^0.21.5",
     "postcss": "^8.4.38",
     "rxjs": "~7.8.0",
     "tailwindcss": "^3.4.4",
@@ -35,14 +36,17 @@
     "@angular/cli": "^18.0.3",
     "@angular/compiler-cli": "^18.0.0",
     "@cypress/schematic": "^2.5.2",
-    "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
+    "@types/jest": "^29.5.12",
+    "cypress": "latest",
+    "jest": "^29.7.0",
+    "jest-preset-angular": "^14.1.0",
     "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.4.2",
-    "cypress": "latest"
+    "typescript": "~5.4.2"
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setup-jest.ts"
+    ]
   }
 }
