@@ -1,13 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-    QueryList,
-    ViewChildren
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {CardComponent} from "./components/card/card.component";
 import {HeaderComponent} from "./components/header/header.component";
@@ -20,6 +11,7 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {CounterComponent} from "./components/counter/counter.component";
 import {AsyncPipe} from "@angular/common";
 import {CounterService} from "./shared/counter/counter.service";
+import {PrefetchState} from "./constants/PrefetchState";
 
 @Component({
     selector: 'app-root',
@@ -30,14 +22,13 @@ import {CounterService} from "./shared/counter/counter.service";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-    @ViewChildren(CardComponent)
-    cards!: QueryList<CardComponent>;
+    PrefetchState = PrefetchState;
 
     loader: boolean = true;
     initialState: boolean = true;
     destroyRef: DestroyRef = inject(DestroyRef);
     cardsDetails: CardDetails[] = [];
-    appPrefetched$ = this.httpCardsService.observeReadyForAction$()
+    appPrefetched$ = this.httpCardsService.selectReadyForAction$()
 
 
     constructor(
@@ -53,7 +44,7 @@ export class AppComponent implements OnInit {
     }
 
     private observeForDuelBeginning(): void {
-        this.httpCardsService.observeFetchData$().pipe(
+        this.httpCardsService.selectFetchData$().pipe(
             takeUntilDestroyed(this.destroyRef)
         ).subscribe((appMode: ApplicationMode) => {
                 this.loader = true;
@@ -73,8 +64,8 @@ export class AppComponent implements OnInit {
 
     private observeStarshipDetails(): void {
         const starshipCardsDetails = forkJoin([
-                this.httpCardsService.getNewStarship$(),
-                this.httpCardsService.getNewStarship$()
+                this.httpCardsService.selectNewStarship$(),
+                this.httpCardsService.selectNewStarship$()
             ]
         )
         starshipCardsDetails.pipe(take(1)).subscribe((cardDetails) => {
@@ -90,15 +81,15 @@ export class AppComponent implements OnInit {
 
     private observePeopleDetails(): void {
         const peopleCardsDetails = forkJoin([
-                this.httpCardsService.getNewPerson$(),
-                this.httpCardsService.getNewPerson$()
+                this.httpCardsService.selectNewPerson$(),
+                this.httpCardsService.selectNewPerson$()
             ]
         )
         peopleCardsDetails.pipe(take(1)).subscribe((cardDetails) => {
             this.cardsDetails = cardDetails.map((details) => ({
                 type: CardType.PERSON,
                 data: details.result,
-                comparable: details.result.properties.mass === 'unknown' ? '0' : details.result.properties.mass,
+                comparable: details.result.properties.mass === 'unknown' ? '1' : details.result.properties.mass,
                 winner: false
             }));
             this.refreshViewAfterFetch();

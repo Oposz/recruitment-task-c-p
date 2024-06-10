@@ -6,15 +6,16 @@ import {Starship} from "../../constants/Starship";
 import {ApplicationMode} from "../../constants/ApplicationMode";
 import {AllEntities, EntityId} from "../../constants/AllEntities";
 import {getRandomElementFromArray} from "../../utils/RandomElement";
+import {PrefetchState} from "../../constants/PrefetchState";
 
 @Injectable({
     providedIn: 'root'
 })
 export class HttpCardsService {
     private getDataNotifier$: Subject<ApplicationMode> = new Subject();
-    private peopleIds: string[] = ['1', '2'];
-    private starshipsIds: string[] = ['2', '17']
-    private prefetched$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private peopleIds: string[] = [];
+    private starshipsIds: string[] = [];
+    private prefetched$: BehaviorSubject<number> = new BehaviorSubject(PrefetchState.NOT_STARTED);
 
     private static SWAPI_URL: string = 'https://www.swapi.tech/api'
 
@@ -25,30 +26,30 @@ export class HttpCardsService {
     }
 
     prefetchIds() {
+        this.prefetched$.next(PrefetchState.IN_PROGRESS);
         forkJoin([
             this.prefetchedPeopleIds$(),
             this.prefetchedStarshipsIds$(),
-        ]).subscribe(([peopleIds, starshipsIds]) => {
-            this.peopleIds = peopleIds;
-            this.starshipsIds = starshipsIds
-            this.prefetched$.next(true);
+        ]).subscribe({
+            next: ([peopleIds, starshipsIds]) => {
+                this.peopleIds = peopleIds;
+                this.starshipsIds = starshipsIds
+                this.prefetched$.next(PrefetchState.DONE);
+            },
+            error: () => {
+                this.prefetched$.next(PrefetchState.FAILED)
+            }
         })
     }
 
-    getNewPerson$(): Observable<Person> {
-        if (!this.prefetched$.value) {
-            this.prefetchIds();
-        }
+    selectNewPerson$(): Observable<Person> {
         return this.httpClient.get<Person>(`${HttpCardsService.SWAPI_URL}/people/${getRandomElementFromArray(this.peopleIds)}`)
             .pipe(
                 take(1)
             )
     }
 
-    getNewStarship$(): Observable<Starship> {
-        if (!this.prefetched$.value) {
-            this.prefetchIds();
-        }
+    selectNewStarship$(): Observable<Starship> {
         return this.httpClient.get<Starship>(`${HttpCardsService.SWAPI_URL}/starships/${getRandomElementFromArray(this.starshipsIds)}`)
             .pipe(
                 take(1)
@@ -59,11 +60,11 @@ export class HttpCardsService {
         this.getDataNotifier$.next(mode);
     }
 
-    observeFetchData$(): Observable<ApplicationMode> {
+    selectFetchData$(): Observable<ApplicationMode> {
         return this.getDataNotifier$.asObservable()
     }
 
-    observeReadyForAction$(): Observable<boolean> {
+    selectReadyForAction$(): Observable<number> {
         return this.prefetched$.asObservable()
     }
 

@@ -15,13 +15,17 @@
   <app-counter/>
 } @else {
   <div class="flex justify-center items-center h-full">
-    @if (!(appPrefetched$ | async)) {
+    @if ((appPrefetched$ | async) === PrefetchState.IN_PROGRESS) {
       <h1 class="text-3xl">
         Fetching data...
       </h1>
-    } @else {
+    } @else if ((appPrefetched$ | async) === PrefetchState.DONE) {
       <h1 class="text-3xl">
         Press Play to start
+      </h1>
+    } @else {
+      <h1 class="text-3xl">
+        Something went wrong, pleas refresh browser
       </h1>
     }
   </div>

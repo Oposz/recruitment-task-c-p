@@ -5,7 +5,8 @@ import {MatButton} from "@angular/material/button";
 import {AsyncPipe, NgOptimizedImage} from "@angular/common";
 import {HttpCardsService} from "../../shared/card/http-cards.service";
 import {ApplicationMode} from "../../constants/ApplicationMode";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {map} from "rxjs";
+import {PrefetchState} from "../../constants/PrefetchState";
 
 
 @Component({
@@ -24,10 +25,12 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 export class HeaderComponent {
     destroyRef: DestroyRef = inject(DestroyRef);
     starshipsMode: boolean = false;
-    appReadyForPlay$ = this.cardsService.observeReadyForAction$().pipe(takeUntilDestroyed(this.destroyRef))
+    appReadyForPlay$ = this.httpCardsService.selectReadyForAction$().pipe(map((state: PrefetchState) => {
+        return state === PrefetchState.DONE;
+    }))
 
     constructor(
-        private readonly cardsService: HttpCardsService
+        private readonly httpCardsService: HttpCardsService
     ) {
     }
 
@@ -36,6 +39,6 @@ export class HeaderComponent {
         if (this.starshipsMode) {
             mode = ApplicationMode.STARSHIPS
         }
-        this.cardsService.notify(mode);
+        this.httpCardsService.notify(mode);
     }
 }
