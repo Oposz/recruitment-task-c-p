@@ -24,7 +24,7 @@ import {PrefetchState} from "./constants/PrefetchState";
 export class AppComponent implements OnInit {
     PrefetchState = PrefetchState;
 
-    loader: boolean = true;
+    loader: boolean = false;
     initialState: boolean = true;
     destroyRef: DestroyRef = inject(DestroyRef);
     cardsDetails: CardDetails[] = [];
@@ -47,7 +47,6 @@ export class AppComponent implements OnInit {
         this.httpCardsService.selectFetchData$().pipe(
             takeUntilDestroyed(this.destroyRef)
         ).subscribe((appMode: ApplicationMode) => {
-                this.loader = true;
                 this.initialState = false;
                 this.assignCardDetail(appMode)
             }
@@ -55,6 +54,8 @@ export class AppComponent implements OnInit {
     }
 
     private assignCardDetail(mode: ApplicationMode): void {
+        if (this.loader) return;
+        this.loader = true;
         if (mode === ApplicationMode.STARSHIPS) {
             this.observeStarshipDetails();
         } else {
