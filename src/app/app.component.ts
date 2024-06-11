@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
             this.cardsDetails = cardDetails.map((details) => ({
                 type: CardType.STARSHIP,
                 data: details.result,
-                comparable: details.result.properties.crew,
+                comparable: details.result.properties.crew === 'unknown' ? '1' : details.result.properties.crew,
                 winner: false
             }));
             this.refreshViewAfterFetch();

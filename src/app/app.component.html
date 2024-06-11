@@ -1,6 +1,6 @@
 <app-header class="h-min"/>
 @if (!initialState) {
-  <div class="flex-col md:flex-row flex p-16 justify-around items-center h-1/2 w-full">
+  <div class="flex-col md:flex-row flex p-8 md:p-16 justify-around items-center md:h-1/2 w-full">
     @if (!loader) {
       @for (card of cardsDetails; track card.data.uid; let first = $first) {
         <app-card class="md:w-2/5 h-full" [cardDetails]="card"/>
@@ -14,17 +14,17 @@
   </div>
   <app-counter/>
 } @else {
-  <div class="flex justify-center items-center h-full">
+  <div class="flex justify-center items-center h-full p-8 md:p-16">
     @if ((appPrefetched$ | async) === PrefetchState.IN_PROGRESS) {
-      <h1 class="text-3xl">
+      <h1 class="text-3xl text-center">
         Fetching data...
       </h1>
     } @else if ((appPrefetched$ | async) === PrefetchState.DONE) {
-      <h1 class="text-3xl">
+      <h1 class="text-3xl text-center">
         Press Play to start
       </h1>
     } @else {
-      <h1 class="text-3xl">
+      <h1 class="text-3xl text-center">
         Something went wrong, pleas refresh browser
       </h1>
     }
